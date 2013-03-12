@@ -75,7 +75,7 @@ function getAllObservationValuesNO($foi_id, $start_date, $end_date){
 				WHERE (feature_of_interest_id = '$foi_id') AND (quality_value='no') AND (time_stamp >= '$start_date'::date))
 				INTERSECT
 				(SELECT time_stamp, phenomenon_description, numeric_value, unit
-				FROM observation NATURAL JOIN phenomenon
+				FROM observation NATURAL JOIN phenomenon NATURAL JOIN quality
 				WHERE (feature_of_interest_id = '$foi_id') AND (quality_value='no') AND  (time_stamp <= '$end_date'::date))");
 		return pg_fetch_all($result);
 	}
