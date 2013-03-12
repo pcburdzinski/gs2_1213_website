@@ -39,7 +39,7 @@ function getFoi(){
 	return pg_fetch_all($result);
 }
 
-/* Fliegt wahrscheinlich raus! */
+/* Fliegt wahrscheinlich raus! ... oder nicht? */
 function getFoiID($lat, $long){
 	global $conn;
 	if (isset ($lat) AND isset($long)){
@@ -51,13 +51,12 @@ function getFoiID($lat, $long){
 }
  
 
-/* !! Doch zwei Funktionen notwendig! 1. Fkt: Mit Ausreißer 2. Fkt.: Ohne Ausreißer
 /* Get all observation values of one feature of interest */
 function getAllObservationValues($foi_id, $start_date, $end_date){
 	global $conn;
 	if (isset ($foi_id) AND isset($start_date) AND isset($end_date) AND isset($outliers)){
 			$result = pg_query($conn, "(SELECT time_stamp, phenomenon_description, numeric_value, unit
-					FROM observation NATURAL JOIN phenomenon NATURAL JOIN quality
+					FROM observation NATURAL JOIN phenomenon
 					WHERE (feature_of_interest_id = '$foi_id') AND (time_stamp >= '$start_date'::date))
 						INTERSECT
 					(SELECT time_stamp, phenomenon_description, numeric_value, unit
@@ -66,58 +65,126 @@ function getAllObservationValues($foi_id, $start_date, $end_date){
 			return pg_fetch_all($result);
 	}	
 }
+
+/* Get all observation values of one feature of interest without outliers */
+function getAllObservationValuesNO($foi_id, $start_date, $end_date){
+	global $conn;
+	if (isset ($foi_id) AND isset($start_date) AND isset($end_date) AND isset($outliers)){
+		$result = pg_query($conn, "(SELECT time_stamp, phenomenon_description, numeric_value, unit
+				FROM observation NATURAL JOIN phenomenon NATURAL JOIN quality
+				WHERE (feature_of_interest_id = '$foi_id') AND (quality_value='no') AND (time_stamp >= '$start_date'::date))
+				INTERSECT
+				(SELECT time_stamp, phenomenon_description, numeric_value, unit
+				FROM observation NATURAL JOIN phenomenon
+				WHERE (feature_of_interest_id = '$foi_id') AND (quality_value='no') AND  (time_stamp <= '$end_date'::date))");
+		return pg_fetch_all($result);
+	}
+}
+
 /* Get the observation values of one feature of interest */
 function getObservationValues($foi_id, $start_date, $end_date){
 	global $conn;
 	if (isset ($foi_id) AND isset($start_date) AND isset($end_date)){
 		$numargs = func_num_args();
 		switch($numargs){
-			case 5:
+			case 4:
 				$phenomenon1 = func_get_arg(4);
 				$result = pg_query($conn, "(SELECT time_stamp, phenomenon_description, numeric_value, unit
-						FROM observation NATURAL JOIN phenomenon NATURAL JOIN quality
+						FROM observation NATURAL JOIN phenomenon
 						WHERE (feature_of_interest_id = '$foi_id') AND (time_stamp >= '$start_date'::date) 
 						AND (phenomenon_description = '$phenomenon1'))
 						INTERSECT
 						(SELECT time_stamp, phenomenon_description, numeric_value, unit
-						FROM observation NATURAL JOIN phenomenon NATURAL JOIN quality
+						FROM observation NATURAL JOIN phenomenon
 						WHERE (feature_of_interest_id = '$foi_id') AND  (time_stamp <= '$end_date'::date) 
 						AND (phenomenon_description = '$phenomenon1'))");
 				return pg_fetch_all($result);
 				break;
 			
-			case 6:
+			case 5:
 				$phenomenon1 = func_get_arg(4);
 				$phenomenon2 = func_get_arg(5);
 				$result = pg_query($conn, "(SELECT time_stamp, phenomenon_description, numeric_value, unit
-						FROM observation NATURAL JOIN phenomenon NATURAL JOIN quality
+						FROM observation NATURAL JOIN phenomenon
 						WHERE (feature_of_interest_id = '$foi_id')  AND (time_stamp >= '$start_date'::date) 
 						AND ((phenomenon_description = '$phenomenon1') OR (phenomenon_description = '$phenomenon2')))
 						INTERSECT
 						(SELECT time_stamp, phenomenon_description, numeric_value, unit
-						FROM observation NATURAL JOIN phenomenon NATURAL JOIN quality
+						FROM observation NATURAL JOIN phenomenon
 						WHERE (feature_of_interest_id = '$foi_id') AND  (time_stamp <= '$end_date'::date) 
 						AND ((phenomenon_description = '$phenomenon1') OR (phenomenon_description = '$phenomenon2')))");
 				return pg_fetch_all($result);
 				
-			case 7:
+			case 6:
 				$phenomenon1 = func_get_arg(4);
 				$phenomenon2 = func_get_arg(5);
 				$phenomenon3 = func_get_arg(6);
 				$result = pg_query($conn, "(SELECT time_stamp, phenomenon_description, numeric_value, unit
-						FROM observation NATURAL JOIN phenomenon NATURAL JOIN quality
+						FROM observation NATURAL JOIN phenomenon
 						WHERE (feature_of_interest_id = '$foi_id') AND (time_stamp >= '$start_date'::date) 
 						AND ((phenomenon_description = '$phenomenon1')  OR (phenomenon_description = '$phenomenon2') OR (phenomenon_description = '$phenomenon3')))
 						INTERSECT
 						(SELECT time_stamp, phenomenon_description, numeric_value, unit
-						FROM observation NATURAL JOIN phenomenon NATURAL JOIN quality
+						FROM observation NATURAL JOIN phenomenon
 						WHERE (feature_of_interest_id = '$foi_id') AND  (time_stamp <= '$end_date'::date) 
 						AND ((phenomenon_description = '$phenomenon1')  OR (phenomenon_description = '$phenomenon2') OR (phenomenon_description = '$phenomenon3')))");
 				return pg_fetch_all($result);
 		}
 	}
-		
 }
+
+/* Get the observation of one feature of interest without outliers */
+function getObservationValuesNO($foi_id, $start_date, $end_date){
+	global $conn;
+	if (isset ($foi_id) AND isset($start_date) AND isset($end_date)){
+		$numargs = func_num_args();
+		switch($numargs){
+			case 4:
+				$phenomenon1 = func_get_arg(4);
+				$result = pg_query($conn, "(SELECT time_stamp, phenomenon_description, numeric_value, unit
+						FROM observation NATURAL JOIN phenomenon NATURAL JOIN quality
+						WHERE (feature_of_interest_id = '$foi_id') AND (quality_value='no') AND (time_stamp >= '$start_date'::date)
+						AND (phenomenon_description = '$phenomenon1'))
+						INTERSECT
+						(SELECT time_stamp, phenomenon_description, numeric_value, unit
+						FROM observation NATURAL JOIN phenomenon NATURAL JOIN quality
+						WHERE (feature_of_interest_id = '$foi_id') AND (quality_value='no') AND (time_stamp <= '$end_date'::date)
+						AND (phenomenon_description = '$phenomenon1'))");
+				return pg_fetch_all($result);
+				break;
+					
+			case 5:
+				$phenomenon1 = func_get_arg(4);
+				$phenomenon2 = func_get_arg(5);
+				$result = pg_query($conn, "(SELECT time_stamp, phenomenon_description, numeric_value, unit
+						FROM observation NATURAL JOIN phenomenon NATURAL JOIN quality
+						WHERE (feature_of_interest_id = '$foi_id') AND (quality_value='no') AND (time_stamp >= '$start_date'::date)
+						AND ((phenomenon_description = '$phenomenon1') OR (phenomenon_description = '$phenomenon2')))
+						INTERSECT
+						(SELECT time_stamp, phenomenon_description, numeric_value, unit
+						FROM observation NATURAL JOIN phenomenon NATURAL JOIN quality
+						WHERE (feature_of_interest_id = '$foi_id') AND (quality_value='no') AND (time_stamp <= '$end_date'::date)
+						AND ((phenomenon_description = '$phenomenon1') OR (phenomenon_description = '$phenomenon2')))");
+				return pg_fetch_all($result);
+
+			case 6:
+				$phenomenon1 = func_get_arg(4);
+				$phenomenon2 = func_get_arg(5);
+				$phenomenon3 = func_get_arg(6);
+				$result = pg_query($conn, "(SELECT time_stamp, phenomenon_description, numeric_value, unit
+						FROM observation NATURAL JOIN phenomenon NATURAL JOIN quality
+						WHERE (feature_of_interest_id = '$foi_id') AND (quality_value='no') AND (time_stamp >= '$start_date'::date)
+						AND ((phenomenon_description = '$phenomenon1')  OR (phenomenon_description = '$phenomenon2') OR (phenomenon_description = '$phenomenon3')))
+						INTERSECT
+						(SELECT time_stamp, phenomenon_description, numeric_value, unit
+						FROM observation NATURAL JOIN phenomenon NATURAL JOIN quality
+						WHERE (feature_of_interest_id = '$foi_id') AND (quality_value='no') AND (time_stamp <= '$end_date'::date)
+						AND ((phenomenon_description = '$phenomenon1')  OR (phenomenon_description = '$phenomenon2') OR (phenomenon_description = '$phenomenon3')))");
+				return pg_fetch_all($result);
+		}
+	}
+}
+
 /* Get the last observation values of one feature_of_interest */
 function getLastObservationValues($foi_id){
 	global $conn;
