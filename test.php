@@ -22,7 +22,7 @@ $(function() {
 		<p>
 			<label>Messstation</label>
 					<?php 
-						include_once('selopt.php');
+						include('selopt.php');
 					
 					?>
 		</p>
@@ -72,7 +72,7 @@ $(function() {
 	</form>
 <div>	
 	<?php
-	include_once ('getobs.php');
+	include ('getobs.php');
 ?>
 </div>
 </body>

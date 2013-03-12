@@ -1,6 +1,6 @@
 <?php 
 
-	include ('dbconnector.php');
+	require_once ('dbconnector.php');
 	
 	echo '<select id = "foi"
 			name = "foi">';
