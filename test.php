@@ -9,7 +9,9 @@
 <script>
 $(function() {
 	$( "#datepicker" ).datepicker( { dateFormat: 'yy-mm-dd' });
+	$( "#datepicker").datepicker('setDate', '+0');
 	$( "#datepicker2" ).datepicker( {dateFormat: 'yy-mm-dd' });
+	$( "#datepicker2").datepicker('setDate', '+1');
 
 });
 </script>
