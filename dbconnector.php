@@ -88,7 +88,7 @@ function getObservationValues($foi_id, $start_date, $end_date){
 		$numargs = func_num_args();
 		switch($numargs){
 			case 4:
-				$phenomenon1 = func_get_arg(4);
+				$phenomenon1 = func_get_arg(3);
 				$result = pg_query($conn, "(SELECT time_stamp, phenomenon_description, numeric_value, unit
 						FROM observation NATURAL JOIN phenomenon
 						WHERE (feature_of_interest_id = '$foi_id') AND (time_stamp >= '$start_date'::date) 
@@ -102,8 +102,8 @@ function getObservationValues($foi_id, $start_date, $end_date){
 				break;
 			
 			case 5:
-				$phenomenon1 = func_get_arg(4);
-				$phenomenon2 = func_get_arg(5);
+				$phenomenon1 = func_get_arg(3);
+				$phenomenon2 = func_get_arg(4);
 				$result = pg_query($conn, "(SELECT time_stamp, phenomenon_description, numeric_value, unit
 						FROM observation NATURAL JOIN phenomenon
 						WHERE (feature_of_interest_id = '$foi_id')  AND (time_stamp >= '$start_date'::date) 
@@ -116,9 +116,9 @@ function getObservationValues($foi_id, $start_date, $end_date){
 				return pg_fetch_all($result);
 				
 			case 6:
-				$phenomenon1 = func_get_arg(4);
-				$phenomenon2 = func_get_arg(5);
-				$phenomenon3 = func_get_arg(6);
+				$phenomenon1 = func_get_arg(3);
+				$phenomenon2 = func_get_arg(4);
+				$phenomenon3 = func_get_arg(5);
 				$result = pg_query($conn, "(SELECT time_stamp, phenomenon_description, numeric_value, unit
 						FROM observation NATURAL JOIN phenomenon
 						WHERE (feature_of_interest_id = '$foi_id') AND (time_stamp >= '$start_date'::date) 
@@ -140,7 +140,7 @@ function getObservationValuesNO($foi_id, $start_date, $end_date){
 		$numargs = func_num_args();
 		switch($numargs){
 			case 4:
-				$phenomenon1 = func_get_arg(4);
+				$phenomenon1 = func_get_arg(3);
 				$result = pg_query($conn, "(SELECT time_stamp, phenomenon_description, numeric_value, unit
 						FROM observation NATURAL JOIN phenomenon NATURAL JOIN quality
 						WHERE (feature_of_interest_id = '$foi_id') AND (quality_value='no') AND (time_stamp >= '$start_date'::date)
@@ -154,8 +154,8 @@ function getObservationValuesNO($foi_id, $start_date, $end_date){
 				break;
 					
 			case 5:
-				$phenomenon1 = func_get_arg(4);
-				$phenomenon2 = func_get_arg(5);
+				$phenomenon1 = func_get_arg(3);
+				$phenomenon2 = func_get_arg(4);
 				$result = pg_query($conn, "(SELECT time_stamp, phenomenon_description, numeric_value, unit
 						FROM observation NATURAL JOIN phenomenon NATURAL JOIN quality
 						WHERE (feature_of_interest_id = '$foi_id') AND (quality_value='no') AND (time_stamp >= '$start_date'::date)
@@ -168,9 +168,9 @@ function getObservationValuesNO($foi_id, $start_date, $end_date){
 				return pg_fetch_all($result);
 
 			case 6:
-				$phenomenon1 = func_get_arg(4);
-				$phenomenon2 = func_get_arg(5);
-				$phenomenon3 = func_get_arg(6);
+				$phenomenon1 = func_get_arg(3);
+				$phenomenon2 = func_get_arg(4);
+				$phenomenon3 = func_get_arg(5);
 				$result = pg_query($conn, "(SELECT time_stamp, phenomenon_description, numeric_value, unit
 						FROM observation NATURAL JOIN phenomenon NATURAL JOIN quality
 						WHERE (feature_of_interest_id = '$foi_id') AND (quality_value='no') AND (time_stamp >= '$start_date'::date)
