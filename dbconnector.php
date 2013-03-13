@@ -199,7 +199,6 @@ function getLastObservationValues($foi_id){
 	}
 }
 
-/* arrayToJSON */
 function arrayToJSON($resource){
 	return json_encode($resource);
 }
